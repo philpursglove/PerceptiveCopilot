@@ -1,0 +1,6 @@
+@PerceptiveCopilot.Server_HostAddress = http://localhost:5029
+
+GET {{PerceptiveCopilot.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

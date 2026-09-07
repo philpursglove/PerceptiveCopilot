@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="perceptivecopilot.client/perceptivecopilot.client.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="PerceptiveCopilot.Server/PerceptiveCopilot.Server.csproj" />
+</Solution>
