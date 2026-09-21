@@ -3,5 +3,6 @@
     <Build />
     <Deploy />
   </Project>
+  <Project Path="PerceptiveCopilot.Data/PerceptiveCopilot.Data.csproj" Id="33ce31e9-8e4e-4e88-9519-f6be6b4aeeb1" />
   <Project Path="PerceptiveCopilot.Server/PerceptiveCopilot.Server.csproj" />
 </Solution>
