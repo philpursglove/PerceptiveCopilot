@@ -1,55 +1,51 @@
-﻿using Microsoft.Data.SqlClient;
-using Microsoft.Data.SqlTypes;
+﻿using Microsoft.Data.SqlTypes;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.AI;
+using PerceptiveCopilot.Data;
 using System.Text;
 using UglyToad.PdfPig;
 
 public class PdfIngestionService
 {
     private readonly IEmbeddingGenerator<string, Embedding<float>> _embeddingGenerator;
-    private readonly string _connectionString;
+    private readonly DbContextOptions<PerceptiveCopilotDbContext> _dbContextOptions;
 
-    public PdfIngestionService(IEmbeddingGenerator<string, Embedding<float>> embeddingGenerator, string connectionString)
+    public PdfIngestionService(
+        IEmbeddingGenerator<string, Embedding<float>> embeddingGenerator,
+        DbContextOptions<PerceptiveCopilotDbContext> dbContextOptions)
     {
         _embeddingGenerator = embeddingGenerator;
-        _connectionString = connectionString;
+        _dbContextOptions = dbContextOptions;
     }
 
     public async Task IngestPdfAsync(string filePath, string documentName)
     {
         // 1. Extract raw text from PDF using PdfPig
-        string rawText = ExtractTextFromPdf(filePath);
+        var rawText = ExtractTextFromPdf(filePath);
 
         // 2. Chunk text into ~500 token windows with 50 token overlap
-        List<string> textChunks = ChunkText(rawText, maxChunkSize: 2000, overlapSize: 200);
+        var textChunks = ChunkText(rawText, maxChunkSize: 2000, overlapSize: 200);
 
-        // 3. Connect to Azure SQL Database
-        using var connection = new SqlConnection(_connectionString);
-        await connection.OpenAsync();
-
-        string insertQuery = @"
-            INSERT INTO DocumentChunks (DocumentName, ContentChunk, Embedding) 
-            VALUES (@DocumentName, @ContentChunk, @Embedding);";
+        // 3. Persist chunks using EF Core DbContext
+        await using var dbContext = new PerceptiveCopilotDbContext(_dbContextOptions);
 
         foreach (var chunk in textChunks)
         {
             // 4. Generate the 1536-dimensional float vector for this specific chunk
             var embeddingResult = await _embeddingGenerator.GenerateAsync(chunk);
-            float[] vectorArray = embeddingResult.First().Vector.ToArray();
+            var vectorArray = embeddingResult.Vector.ToArray();
 
-            using var command = new SqlCommand(insertQuery, connection);
-            command.Parameters.AddWithValue("@DocumentName", documentName);
-            command.Parameters.AddWithValue("@ContentChunk", chunk);
-
-            // Pass the vector array using Azure SQL's native binary SqlVector type
-            var vectorParam = new SqlParameter("@Embedding", System.Data.SqlDbType.VarBinary)
+            var documentChunk = new DocumentChunk
             {
-                Value = new SqlVector<float>(vectorArray)
+                DocumentName = documentName,
+                ContentChunk = chunk,
+                Embedding = new SqlVector<float>(vectorArray)
             };
-            command.Parameters.Add(vectorParam);
 
-            await command.ExecuteNonQueryAsync();
+            dbContext.DocumentChunks.Add(documentChunk);
         }
+
+        await dbContext.SaveChangesAsync();
     }
 
     private string ExtractTextFromPdf(string filePath)
@@ -70,15 +66,15 @@ public class PdfIngestionService
         var chunks = new List<string>();
         if (string.IsNullOrWhiteSpace(text)) return chunks;
 
-        int wordsPerChunk = maxChunkSize / 5; // Rough estimate of character length to tokens
-        int wordsOverlap = overlapSize / 5;
+        var wordsPerChunk = maxChunkSize / 5; // Rough estimate of character length to tokens
+        var wordsOverlap = overlapSize / 5;
 
-        string[] words = text.Split(new[] { ' ', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+        var words = text.Split(new[] { ' ', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
-        for (int i = 0; i < words.Length; i += (wordsPerChunk - wordsOverlap))
+        for (var i = 0; i < words.Length; i += (wordsPerChunk - wordsOverlap))
         {
             var chunkWords = words.Skip(i).Take(wordsPerChunk);
-            string chunk = string.Join(" ", chunkWords);
+            var chunk = string.Join(" ", chunkWords);
 
             if (!string.IsNullOrWhiteSpace(chunk))
             {
