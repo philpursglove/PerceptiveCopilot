@@ -10,10 +10,12 @@ var configuration = new ConfigurationBuilder()
     .AddUserSecrets<Program>(optional: false)
     .Build();
 
+var documentsFolder = GetRequiredSetting(configuration, "Ingestion:DocumentsFolder");
+
 var filePaths = configuration
     .GetSection("Ingestion:FilePaths")
     .GetChildren()
-    .Select(section => section.Value)
+    .Select(section => Path.Combine(documentsFolder, section.Value))
     .Where(path => !string.IsNullOrWhiteSpace(path))
     .Cast<string>()
     .ToList();
