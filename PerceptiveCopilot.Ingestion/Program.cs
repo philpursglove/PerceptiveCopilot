@@ -4,24 +4,19 @@ using Microsoft.EntityFrameworkCore;
 using OpenAI;
 using PerceptiveCopilot.Data;
 
-
-List<string> filePaths =
-[
-    "C:\\Users\\Phil\\Downloads\\aad-eod-art.pdf",
-    "C:\\Users\\Phil\\Downloads\\resistance-ywing-loadout.pdf",
-    "C:\\Users\\Phil\\Downloads\\scenarios.pdf",
-    "C:\\Users\\Phil\\Downloads\\legends-and-relics.pdf",
-    "C:\\Users\\Phil\\Downloads\\errata-v1.8.2.pdf",
-    "C:\\Users\\Phil\\Downloads\\rules-reference-v1.4.6.pdf",
-    "C:\\Users\\Phil\\Downloads\\rulebook-v1.1.1.pdf",
-    "C:\\Users\\Phil\\Downloads\\Points-Update-50p-2-1-20260816.pdf",
-    "C:\\Users\\Phil\\Downloads\\copr-v2.0.pdf",
-    "C:\\Users\\Phil\\Downloads\\pnp-starwing-tie-phantom.pdf"
-];
-
 var configuration = new ConfigurationBuilder()
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json")
     .AddUserSecrets<Program>(optional: false)
     .Build();
+
+var filePaths = configuration
+    .GetSection("Ingestion:FilePaths")
+    .GetChildren()
+    .Select(section => section.Value)
+    .Where(path => !string.IsNullOrWhiteSpace(path))
+    .Cast<string>()
+    .ToList();
 
 var foundryBaseUri = GetRequiredSetting(configuration, "Foundry:BaseUri");
 var foundryApiKey = GetRequiredSetting(configuration, "Foundry:ApiKey");
