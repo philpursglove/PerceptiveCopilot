@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-u
+﻿using Microsoft.AspNetCore.Mvc;
+using PerceptiveCopilot.Server.DTO;
 
 namespace PerceptiveCopilot.Server
 {
