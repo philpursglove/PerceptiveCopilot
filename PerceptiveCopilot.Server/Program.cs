@@ -11,24 +11,29 @@ var configuration = new ConfigurationBuilder()
     .AddUserSecrets<Program>(optional: false)
     .Build();
 
-var foundrySettings = configuration.GetSection("Foundry").Get<FoundrySettings>();
-var deploymentSettings = configuration.GetSection("Deployments").Get<DeploymentSettings>();
+var embeddingSettings = configuration.GetSection("Foundry:Embedding").Get<FoundrySettings>();
+var chatSettings = configuration.GetSection("Foundry:Chat").Get<FoundrySettings>();
 
-var openAIClient = new OpenAIClient(
-    new System.ClientModel.ApiKeyCredential(foundrySettings.ApiKey),
-    new OpenAIClientOptions { Endpoint = new Uri(foundrySettings.BaseUrl) }
+var chatOpenAIClient = new OpenAIClient(
+    new System.ClientModel.ApiKeyCredential(chatSettings.ApiKey),
+    new OpenAIClientOptions { Endpoint = new Uri(chatSettings.BaseUrl) }
 );
 // Add services to the container.
 builder.Services.AddChatClient(services =>
-        openAIClient
-            .GetChatClient(deploymentSettings.ChatModelDeploymentName)
+        chatOpenAIClient
+            .GetChatClient(chatSettings.DeploymentName)
             .AsIChatClient() // e.g. "llama-3-3-70b-instruct"
     );
 
+var embeddingOpenAIClient = new OpenAIClient(
+    new System.ClientModel.ApiKeyCredential(embeddingSettings.ApiKey),
+    new OpenAIClientOptions { Endpoint = new Uri(embeddingSettings.BaseUrl) }
+);
+
 // 2. Register the Vector Embedding Generator
 builder.Services.AddEmbeddingGenerator<string, Embedding<float>>(services =>
-        openAIClient
-            .GetEmbeddingClient(deploymentSettings.EmbeddingModelDeploymentName)
+        embeddingOpenAIClient
+            .GetEmbeddingClient(embeddingSettings.DeploymentName)
             .AsIEmbeddingGenerator()
     );
 
@@ -63,12 +68,7 @@ app.Run();
 
 public class FoundrySettings
 {
+    public string DeploymentName { get; set; }
     public string BaseUrl { get; set; } = string.Empty;
     public string ApiKey { get; set; } = string.Empty;
-}
-
-public class DeploymentSettings
-{
-    public string ChatModelDeploymentName { get; set; } = string.Empty;
-    public string EmbeddingModelDeploymentName { get; set; } = string.Empty;
 }
