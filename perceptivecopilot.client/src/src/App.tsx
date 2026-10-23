@@ -9,48 +9,6 @@ interface Message {
   timestamp: Date;
 }
 
-
-const MOCK_RESPONSES: Record<string, string> = {
-  default: `I'm your X-Wing tactical AI — connect an AI model to get real answers about rules, ship stats, and scenarios. In the meantime, here's what I can tell you once connected:
-
-• **Rules queries** — range, attack sequences, actions, damage deck effects
-• **Ship points** — current point costs from the official AMG points documents
-• **Scenarios** — setup, objectives, and winning conditions for all official scenarios
-• **Upgrades** — ability text, slot requirements, and synergy recommendations
-
-Connect the AI backend to unlock full answers.`,
-};
-
-function getMockResponse(question: string): string {
-  const q = question.toLowerCase();
-
-  if (q.includes("x-wing") && (q.includes("cost") || q.includes("points"))) {
-    return `The **T-65 X-Wing** (standard) costs **46 points** in the current AMG points document (v2.6.1). Pilot costs vary:\n\n• **Luke Skywalker** — 64 pts (includes Force charges, special ability)\n• **Wedge Antilles** — 56 pts\n• **Biggs Darklighter** — 50 pts\n• **Rookie Pilot** — 46 pts\n\nAll costs are before upgrades. X-Wings have **3 upgrade slots** by default: Torpedo, Astromech, and Modification.`;
-  }
-
-  if (q.includes("attack dice") || q.includes("how many attack")) {
-    return `Attack dice in X-Wing depend on the ship's **attack value**:\n\n• **T-65 X-Wing** — 3 red dice (primary weapon)\n• **TIE/ln Fighter** — 2 red dice\n• **Millennium Falcon** — 3 red dice\n• **B-Wing** — 3 red dice\n\nYou roll the number of dice matching the attack value shown on your ship card for the arc being used. Torpedoes and missiles often have different dice counts specified on the upgrade card.`;
-  }
-
-  if (q.includes("obstacle")) {
-    return `**Obstacles** in X-Wing work as follows:\n\n**During movement:** If a ship's template or base overlaps an asteroid or debris field, the ship stops before the obstruction (partially overlapping ships still place on top).\n\n**After stopping on an obstacle:**\n• Roll 1 attack die and suffer the result (damage/crit on matching faces)\n• Skip your perform action step\n• Remove 1 shield (debris clouds only)\n\n**During attacks:** If the attack line crosses an obstacle, the defender rolls 1 extra defense die. The attacker cannot spend lock tokens for rerolls.`;
-  }
-
-  if (q.includes("tie") && (q.includes("stats") || q.includes("fighter"))) {
-    return `**TIE/ln Fighter** — Imperial Light Fighter\n\n\`\`\`\nAttack (front arc):  2\nAgility:             3\nHull:                3\nShields:             0\nActions:  Focus, Evade, Barrel Roll\n\`\`\`\n\nSize: **Small**. The TIE/ln is one of the most agile ships in the game. Its 0-shields stat makes it fragile, but the 3-agility compensates at range. Pilots range from **26 pts** (Academy Pilot) to **57 pts** (Darth Vader).`;
-  }
-
-  if (q.includes("stress")) {
-    return `**Stress tokens** represent pilot overexertion:\n\n**When stressed, a ship:**\n• Cannot execute red maneuvers\n• Cannot perform actions\n\n**Removing stress:**\n• Execute a **green maneuver** — removes 1 stress token\n\n**Common sources of stress:**\n• Performing the SLAM action (Scurrg, etc.)\n• Coordinate actions on some pilots\n• Certain upgrade card abilities\n• Boost/barrel roll when a stress condition is present\n\nMultiple stress tokens stack — you need a green maneuver for each one.`;
-  }
-
-  if (q.includes("assault") || q.includes("scenario")) {
-    return `**Assault at the Barrier** — Scenario Overview\n\n**Objective:** The Rebel player must deliver bombs to the Imperial shield generator while the Imperial player defends.\n\n**Setup:**\n• 3×3 play area\n• Objective tokens placed on the centerline at range 1 from each edge\n• Rebels deploy in the near half, Imperials in the far half\n\n**Winning Conditions:**\n• Rebels win by moving a ship with a bomb upgrade to within range 1 of the generator and dropping it\n• Imperials win by eliminating all Rebel ships before the bomb is delivered\n\n*Connect the AI for full scenario rules and strategic tips.*`;
-  }
-
-  return MOCK_RESPONSES.default;
-}
-
 function ShipIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" xmlns="http://www.w3.org/2000/svg">
@@ -179,7 +137,7 @@ export default function App() {
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      responseText = data.response ?? getMockResponse(text);
+      responseText = data.response;
       conversationRef.current = [
         ...conversationRef.current,
         { role: "user", content: text.trim() },
@@ -187,7 +145,7 @@ export default function App() {
       ];
     } catch {
       setAiError(true);
-      responseText = getMockResponse(text);
+      responseText = '';
     }
 
     const assistantMsg: Message = {
