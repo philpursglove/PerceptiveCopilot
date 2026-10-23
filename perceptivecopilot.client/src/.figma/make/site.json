@@ -1,0 +1,10 @@
+{
+  "description": "Provides instant AI-powered answers on XWing Miniatures Game rules, scenarios, and ship points to help players improve gameplay and strategy.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
