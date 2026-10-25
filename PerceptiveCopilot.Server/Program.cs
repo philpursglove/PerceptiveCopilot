@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json")
-    .AddUserSecrets<Program>(optional: false)
+    .AddUserSecrets<Program>(optional: true)
     .Build();
 
 var embeddingSettings = configuration.GetSection("Foundry:Embedding").Get<FoundrySettings>();
