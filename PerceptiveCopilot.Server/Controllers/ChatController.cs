@@ -30,7 +30,7 @@ namespace PerceptiveCopilot.Server.Controllers
 
             // 1. Generate the coordinate vector from the user's string query
             var embeddingResult = await _embeddingGenerator.GenerateAsync(request.Message);
-            float[] rawVectorArray = embeddingResult.Vector.ToArray();
+            var rawVectorArray = embeddingResult.Vector.ToArray();
             var queryVector = new SqlVector<float>(rawVectorArray);
 
             // 2. Perform the semantic search via Entity Framework LINQ
@@ -40,7 +40,7 @@ namespace PerceptiveCopilot.Server.Controllers
                 .Select(chunk => chunk.ContentChunk)
                 .ToListAsync();
 
-            string retrievedContext = string.Join("\n\n", topChunks);
+            var retrievedContext = string.Join("\n\n", topChunks);
 
             // 3. System Instructions: Direct the model to act as a grounded knowledge-bot
             var promptMessages = new List<ChatMessage>
