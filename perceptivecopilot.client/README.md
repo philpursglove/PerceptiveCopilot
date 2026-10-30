@@ -2,6 +2,24 @@
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
+## Local development with ASP.NET Core
+
+Install Node.js and the .NET 10 SDK, then run `npm install` in this directory.
+Trust the local HTTPS certificate once with `dotnet dev-certs https --trust`.
+Vite automatically exports the certificate and key outside the repository to
+`%APPDATA%\ASP.NET\https` on Windows, or `~/.aspnet/https` on other platforms.
+Production builds and `npm run preview` do not require certificate export.
+
+Run the server's `https` launch profile in Visual Studio. The SPA proxy starts
+`npm run dev` and expects Vite at `https://localhost:8443`.
+Alternatively, run `npm run dev` here while the backend is running separately.
+If you override `PORT`, also update `SpaProxyServerUrl` in the server project.
+
+API requests are proxied to `ASPNETCORE_HTTPS_PORT`, then `ASPNETCORE_URLS`,
+with `https://localhost:7251` as the fallback matching the server's HTTPS profile.
+Both `/api` requests and existing `/Chat` requests are supported; `/Chat` is
+rewritten to `/api/Chat` to match the controller route.
+
 Currently, two official plugins are available:
 
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)

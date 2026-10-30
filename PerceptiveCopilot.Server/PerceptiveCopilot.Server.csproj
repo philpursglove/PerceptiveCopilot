@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <SpaRoot>..\perceptivecopilot.client</SpaRoot>
     <SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
-    <SpaProxyServerUrl>https://localhost:49981</SpaProxyServerUrl>
+    <SpaProxyServerUrl>https://localhost:8443</SpaProxyServerUrl>
     <UserSecretsId>162d3e48-ebd3-4b0d-b350-c702f22329bf</UserSecretsId>
   </PropertyGroup>
 

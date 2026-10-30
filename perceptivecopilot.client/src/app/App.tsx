@@ -125,7 +125,7 @@ export default function App() {
     let responseText: string;
     try {
       const res = await fetch(
-        "https://spqtncweglhwiaibgesm.supabase.co/functions/v1/server/make-server-674f5290/chat",
+        "Chat/chat",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

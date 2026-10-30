@@ -1,12 +1,47 @@
-import { defineConfig, type HtmlTagDescriptor, type Plugin } from 'vite'
-import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
-import path from 'node:path'
+import { defineConfig, type HtmlTagDescriptor, type Plugin } from 'vite';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+import path from 'node:path';
+import { env } from 'node:process';
+import fs from 'node:fs';
+import { homedir } from 'node:os';
+import { spawnSync } from 'node:child_process';
 
 import siteConfiguration from './.figma/make/site.json' with { type: 'json' }
 
+function developmentHttps() {
+  const baseFolder = env.APPDATA
+    ? path.join(env.APPDATA, 'ASP.NET', 'https')
+    : path.join(homedir(), '.aspnet', 'https');
+  const certFilePath = path.join(baseFolder, 'perceptivecopilot.client.pem');
+  const keyFilePath = path.join(baseFolder, 'perceptivecopilot.client.key');
+
+  if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
+    fs.mkdirSync(baseFolder, { recursive: true });
+    const result = spawnSync('dotnet', [
+      'dev-certs', 'https', '--export-path', certFilePath,
+      '--format', 'Pem', '--no-password',
+    ], { stdio: 'inherit' });
+
+    if (result.error) {
+      throw new Error('Could not run dotnet to export the HTTPS development certificate. Ensure the .NET SDK is installed.', { cause: result.error });
+    }
+    if (result.status !== 0) {
+      throw new Error('Could not export the HTTPS development certificate. Run dotnet dev-certs https --trust and retry.');
+    }
+  }
+
+  return {
+    key: fs.readFileSync(keyFilePath),
+    cert: fs.readFileSync(certFilePath),
+  };
+}
+
+const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
+    env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'https://localhost:7251';
+
 // Vite config — https://vitejs.dev/config/
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, command, isPreview }) => {
   // .figma/make/deploy-preview passes `--mode development` for cached-preview builds.
   const emitSourcemaps = mode === 'development'
 
@@ -34,6 +69,18 @@ export default defineConfig(({ mode }) => {
       port: parseInt(process.env.PORT || '8443'),
       strictPort: true,
       watch: { ignored: ['**/.figma/**'] },
+      proxy: {
+        '/api': {
+          target,
+          secure: false,
+        },
+        '^/Chat': {
+          target,
+          secure: false,
+          rewrite: (requestPath) => `/api${requestPath}`,
+        },
+      },
+      https: command === 'serve' && !isPreview ? developmentHttps() : undefined,
     },
     preview: {
       host: process.env.FIGMA_DEV_SERVER_HOST || '0.0.0.0',
