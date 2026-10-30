@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.AI;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
-using Microsoft.EntityFrameworkCore;
 using OpenAI;
 using PerceptiveCopilot.Data;
 
@@ -33,6 +33,10 @@ var openAIClient = new OpenAIClient(
 var dbContextOptions = new DbContextOptionsBuilder<PerceptiveCopilotDbContext>()
     .UseSqlServer(connectionString)
     .Options;
+
+Console.WriteLine("Migrating database to latest schema");
+await using var dbContext = new PerceptiveCopilotDbContext(dbContextOptions);
+await dbContext.Database.MigrateAsync();
 
 IEmbeddingGenerator<string, Embedding<float>> embeddingGenerator = openAIClient
     .GetEmbeddingClient(embeddingModelDeploymentName)

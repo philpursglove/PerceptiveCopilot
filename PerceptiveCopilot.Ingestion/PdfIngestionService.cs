@@ -28,8 +28,6 @@ public class PdfIngestionService
 
         // 3. Persist chunks using EF Core DbContext
         await using var dbContext = new PerceptiveCopilotDbContext(_dbContextOptions);
-        await dbContext.Database.MigrateAsync();
-
         foreach (var chunk in textChunks)
         {
             // 4. Generate the 1536-dimensional float vector for this specific chunk
