@@ -1,3 +1,4 @@
+import { ApplicationInsights } from "@microsoft/applicationinsights-web";
 import { useState, useRef, useEffect } from "react";
 
 type Role = "user" | "assistant";
@@ -106,6 +107,15 @@ export default function App() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
+
+      const appInsights = new ApplicationInsights({
+        config: {
+            connectionString: 'InstrumentationKey=729f499b-f28b-456e-adc2-8efb7d9063dc;IngestionEndpoint=https://uksouth-1.in.applicationinsights.azure.com/;LiveEndpoint=https://uksouth.livediagnostics.monitor.azure.com/;ApplicationId=d3f1a3dc-2212-4090-9c9d-c590a925e985'
+        }
+    });
+    appInsights.loadAppInsights();
+    appInsights.trackPageView();
+
 
   const sendMessage = async (text: string) => {
     if (!text.trim() || isTyping) return;
@@ -293,8 +303,8 @@ export default function App() {
           </form>
           <p className="mt-2 text-[10px] font-mono text-center" style={{ color: aiError ? "#ff6b35" : "#3a4a66" }}>
             {aiError
-              ? "AI connection failed — showing demo answers"
-              : "Enter to send · Shift+Enter for new line · Powered by Claude"}
+              ? "AI connection failed"
+              : "Enter to send · Shift+Enter for new line"}
           </p>
         </div>
       </div>
