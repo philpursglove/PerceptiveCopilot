@@ -135,14 +135,40 @@ export default function App() {
           }),
         }
       );
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      responseText = data.response;
-      conversationRef.current = [
-        ...conversationRef.current,
-        { role: "user", content: text.trim() },
-        { role: "assistant", content: responseText },
-      ];
+      if (!res.ok || !res.body) {
+        throw new Error(`Server returned error status: ${res.status}`);
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let completeResponseText = "";
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        // Decode the binary array chunk into raw text lines
+        const rawChunk = decoder.decode(value, { stream: true });
+        const lines = rawChunk.split('\n');
+
+        for (const line of lines) {
+          // Parse lines that match the standard SSE format ('data: "token"\n\n')
+          if (line.startsWith('data: ')) {
+            const jsonText = line.substring(6).trim(); // Strip the 'data: ' prefix
+            
+            try {
+              // Deserialize the C# string token passed down via JsonSerializer
+              const textToken = JSON.parse(jsonText);
+              
+              completeResponseText += textToken;
+              //onTokenCallback(textToken); // Update UI in real-time
+            } catch (e) {
+              // Ignore incomplete/trailing text packets gracefully
+            }
+          }
+        }
+      }
+      responseText = completeResponseText;
     } catch {
       setAiError(true);
       responseText = '';
