@@ -28,7 +28,7 @@ jobs:
       with:
         node-version: '24'
         cache: 'npm'
-        cache-dependency-path: arcas.client/package-lock.json
+        cache-dependency-path: perceptivecopilot.client/package-lock.json
 
     - name: Restore .NET dependencies
       run: dotnet restore
