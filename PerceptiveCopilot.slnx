@@ -6,7 +6,9 @@
     <Build />
     <Deploy />
   </Project>
+  <Project Path="PerceptiveCopilot.Core/PerceptiveCopilot.Core.csproj" Id="914d513d-193e-458b-9d77-ee6aac920c8c" />
   <Project Path="PerceptiveCopilot.Data/PerceptiveCopilot.Data.csproj" Id="33ce31e9-8e4e-4e88-9519-f6be6b4aeeb1" />
+  <Project Path="PerceptiveCopilot.Functions/PerceptiveCopilot.Functions.csproj" Id="283ced67-2d77-4691-ba24-05d8e9c27134" />
   <Project Path="PerceptiveCopilot.Ingestion/PerceptiveCopilot.Ingestion.csproj" Id="7773ec3a-fd80-44a7-8c2e-64bfa902a75b" />
   <Project Path="PerceptiveCopilot.Server/PerceptiveCopilot.Server.csproj" />
 </Solution>
