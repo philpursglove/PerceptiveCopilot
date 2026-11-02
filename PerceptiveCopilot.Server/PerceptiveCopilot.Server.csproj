@@ -25,6 +25,7 @@
     <ProjectReference Include="..\perceptivecopilot.client\perceptivecopilot.client.esproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+    <ProjectReference Include="..\PerceptiveCopilot.Core\PerceptiveCopilot.Core.csproj" />
     <ProjectReference Include="..\PerceptiveCopilot.Data\PerceptiveCopilot.Data.csproj" />
   </ItemGroup>
 

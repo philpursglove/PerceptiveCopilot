@@ -2,8 +2,8 @@
 using Microsoft.Data.SqlTypes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.AI;
+using PerceptiveCopilot.Core;
 using PerceptiveCopilot.Data;
-using PerceptiveCopilot.Server.DTO;
 
 namespace PerceptiveCopilot.Server.Controllers
 {

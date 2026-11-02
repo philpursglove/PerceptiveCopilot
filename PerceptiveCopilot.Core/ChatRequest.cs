@@ -1,4 +1,4 @@
-﻿namespace PerceptiveCopilot.Server.DTO
+﻿namespace PerceptiveCopilot.Core
 {
     public class ChatRequest
     {
