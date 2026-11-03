@@ -1,12 +1,11 @@
-name: Azure Static Web Apps CI/CD
+name: Azure Static Web Apps CI/CD - Beta
 
 on:
   workflow_dispatch
 
 jobs:
   build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     name: Build and Deploy Job
     permissions:
        id-token: write
@@ -41,13 +40,5 @@ jobs:
           deployment_environment: "beta"
           ###### End of Repository/Build Configurations ######
 
-  close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    name: Close Pull Request Job
-    steps:
-      - name: Close Pull Request
-        id: closepullrequest
-        uses: Azure/static-web-apps-deploy@v1
         with:
           action: "close"
