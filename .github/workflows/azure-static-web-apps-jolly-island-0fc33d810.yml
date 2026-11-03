@@ -39,6 +39,3 @@ jobs:
           github_id_token: ${{ steps.idtoken.outputs.result }}
           deployment_environment: "beta"
           ###### End of Repository/Build Configurations ######
-
-        with:
-          action: "close"
