@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PerceptiveCopilot.Core
+﻿namespace PerceptiveCopilot.Core
 {
     public static class Constants
     {
