@@ -1,9 +1,11 @@
-﻿using Microsoft.Data.SqlTypes;
+﻿using System.Text;
+using Microsoft.Data.SqlTypes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.AI;
 using PerceptiveCopilot.Data;
-using System.Text;
 using UglyToad.PdfPig;
+
+namespace PerceptiveCopilot.Ingestion;
 
 public class PdfIngestionService
 {

@@ -3,6 +3,7 @@ using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using OpenAI;
 using PerceptiveCopilot.Data;
+using PerceptiveCopilot.Ingestion;
 
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -57,6 +58,7 @@ foreach (var filePath in filePaths)
         Console.WriteLine($"File not found: {filePath}");
     }
 }
+Console.WriteLine("Ingestion complete");
 
 static string GetRequiredSetting(IConfiguration configuration, string key)
 {
