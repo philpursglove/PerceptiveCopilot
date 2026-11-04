@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/Solution Items/">
+    <File Path=".github/workflows/Azure Static Web Apps CICD - Beta.yml" />
     <File Path=".github/workflows/CI Build.yml" />
   </Folder>
   <Project Path="perceptivecopilot.client/perceptivecopilot.client.esproj">
