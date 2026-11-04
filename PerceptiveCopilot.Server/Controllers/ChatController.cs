@@ -33,12 +33,25 @@ namespace PerceptiveCopilot.Server.Controllers
             var rawVectorArray = embeddingResult.Vector.ToArray();
             var queryVector = new SqlVector<float>(rawVectorArray);
 
+            List<string> topChunks;
             // 2. Perform the semantic search via Entity Framework LINQ
-            var topChunks = await _dbContext.DocumentChunks
-                .OrderBy(chunk => EF.Functions.VectorDistance("cosine", chunk.Embedding, queryVector)) // Translated to T-SQL native VECTOR_DISTANCE
-                .Take(3)
-                .Select(chunk => chunk.ContentChunk)
-                .ToListAsync();
+            try
+            {
+                topChunks = await _dbContext.DocumentChunks
+                    .OrderBy(chunk => EF.Functions.VectorDistance("cosine", chunk.Embedding, queryVector)) // Translated to T-SQL native VECTOR_DISTANCE
+                    .Take(3)
+                    .Select(chunk => chunk.ContentChunk)
+                    .ToListAsync();
+
+            }
+            catch (Exception)
+            {
+                topChunks = await _dbContext.DocumentChunks
+                    .OrderBy(chunk => EF.Functions.VectorDistance("cosine", chunk.Embedding, queryVector)) // Translated to T-SQL native VECTOR_DISTANCE
+                    .Take(3)
+                    .Select(chunk => chunk.ContentChunk)
+                    .ToListAsync();
+            }
 
             var retrievedContext = string.Join("\n\n", topChunks);
 
