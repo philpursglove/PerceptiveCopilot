@@ -1,7 +1,12 @@
 name: Azure Static Web Apps CI/CD - Beta
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
+    inputs:
+      source_branch:
+        description: "Source branch name to build and deploy to beta (for example, main or feature/my-change)"
+        required: true
+        type: string
 
 jobs:
   build_and_deploy_job:
@@ -13,6 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
+          ref: refs/heads/${{ inputs.source_branch }}
           submodules: true
           lfs: false
       - name: Install OIDC Client from Core Package
