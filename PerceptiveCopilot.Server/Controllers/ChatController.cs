@@ -39,7 +39,7 @@ namespace PerceptiveCopilot.Server.Controllers
             {
                 topChunks = await _dbContext.DocumentChunks
                     .OrderBy(chunk => EF.Functions.VectorDistance("cosine", chunk.Embedding, queryVector)) // Translated to T-SQL native VECTOR_DISTANCE
-                    .Take(3)
+                    .Take(10)
                     .Select(chunk => chunk.ContentChunk)
                     .ToListAsync();
 
@@ -48,7 +48,7 @@ namespace PerceptiveCopilot.Server.Controllers
             {
                 topChunks = await _dbContext.DocumentChunks
                     .OrderBy(chunk => EF.Functions.VectorDistance("cosine", chunk.Embedding, queryVector)) // Translated to T-SQL native VECTOR_DISTANCE
-                    .Take(3)
+                    .Take(10)
                     .Select(chunk => chunk.ContentChunk)
                     .ToListAsync();
             }
