@@ -91,7 +91,7 @@ function MessageBubble({ message }: { message: Message }) {
 const WELCOME_MESSAGE: Message = {
   id: "welcome",
   role: "assistant",
-  content: `**Welcome to Perceptive Copilot** — your X-Wing Miniatures tactical advisor.\n\nAsk me about:\n• **Ship stats & point costs** — any ship from any faction\n• **Game rules** — attack sequences, actions, damage effects\n• **Scenarios** — setup, objectives, win conditions\n• **Upgrades** — ability text and synergy tips\n\nWhat's your first query, Commander?`,
+  content: `**Welcome to Perceptive Copilot** — your X-Wing Miniatures rules advisor.\n\nAsk me about:\n• **Ship stats & point costs** — any ship from any faction\n• **Game rules** — attack sequences, actions, damage effects\n• **Scenarios** — setup, objectives, win conditions\n• **Upgrades** — ability text and synergy tips\n\nWhat's your first query, Commander?`,
   timestamp: new Date(),
 };
 
@@ -241,7 +241,7 @@ export default function App() {
                 PERCEPTIVE COPILOT
               </h1>
               <p className="text-[10px] font-mono tracking-widest text-[#5a6e99] uppercase">
-                X-Wing Tactical Advisor · v2.6
+                X-Wing Rules Advisor · v2.6
               </p>
             </div>
           </div>
