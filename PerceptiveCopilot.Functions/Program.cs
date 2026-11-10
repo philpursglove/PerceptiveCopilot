@@ -20,7 +20,10 @@ if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("APPLICATIONINSIGHT
         .UseAzureMonitorExporter();
 }
 
-var configuration = builder.Configuration;
+var configuration = new ConfigurationBuilder()
+    .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
+    .AddUserSecrets<Program>(optional: true)
+    .Build();
 
 var embeddingSettings = configuration.GetSection("Foundry:Embedding").Get<FoundrySettings>();
 var chatSettings = configuration.GetSection("Foundry:Chat").Get<FoundrySettings>();
