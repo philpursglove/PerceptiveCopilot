@@ -37,8 +37,8 @@ function developmentHttps() {
   };
 }
 
-const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
-    env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'https://localhost:7251';
+// Azure Functions host (PerceptiveCopilot.Functions, launchSettings uses --port 7081)
+const target = env.FUNCTIONS_URL ?? 'http://localhost:7081';
 
 // Vite config — https://vitejs.dev/config/
 export default defineConfig(({ mode, command, isPreview }) => {
@@ -74,10 +74,10 @@ export default defineConfig(({ mode, command, isPreview }) => {
           target,
           secure: false,
         },
-        '^/Chat': {
+        '^/Chat/chat': {
           target,
           secure: false,
-          rewrite: (requestPath) => `/api${requestPath}`,
+          rewrite: () => '/api/chat',
         },
       },
       https: command === 'serve' && !isPreview ? developmentHttps() : undefined,

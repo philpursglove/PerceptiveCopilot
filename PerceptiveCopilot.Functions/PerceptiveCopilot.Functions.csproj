@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\perceptivecopilot.client\perceptivecopilot.client.esproj" />
     <ProjectReference Include="..\PerceptiveCopilot.Core\PerceptiveCopilot.Core.csproj" />
     <ProjectReference Include="..\PerceptiveCopilot.Data\PerceptiveCopilot.Data.csproj" />
   </ItemGroup>

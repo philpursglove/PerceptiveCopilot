@@ -29,11 +29,15 @@ public class ChatFunction
     }
 
     [Function("ChatFunction")]
-    public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "chat")] HttpRequest req,
-        [FromBody] ChatRequest chatRequest)
+    public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "chat")] HttpRequest req)
     {
         _logger.LogInformation("C# HTTP trigger function processed a request.");
-        // Implement your chat logic here
+
+        var chatRequest = await req.ReadFromJsonAsync<ChatRequest>(req.HttpContext.RequestAborted);
+        if (string.IsNullOrWhiteSpace(chatRequest?.Message))
+        {
+            return new BadRequestObjectResult("A chat message is required.");
+        }
 
         // 1. Generate the coordinate vector from the user's string query
         var embeddingResult = await _embeddingGenerator.GenerateAsync(chatRequest.Message);
