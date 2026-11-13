@@ -45,12 +45,25 @@ public class ChatFunction
         var queryVector = new SqlVector<float>(rawVectorArray);
 
         // 2. Perform the semantic search via Entity Framework LINQ
-        var topChunks = await _dbContext.DocumentChunks
+        List<string> topChunks;
+        try
+        {
+            topChunks = await _dbContext.DocumentChunks
             .OrderBy(chunk => EF.Functions.VectorDistance("cosine", chunk.Embedding, queryVector)) // Translated to T-SQL native VECTOR_DISTANCE
-            .Take(3)
+            .Take(10)
             .Select(chunk => chunk.ContentChunk)
             .ToListAsync();
+        }
 
+        catch (Exception ex)
+        {
+            topChunks = await _dbContext.DocumentChunks
+            .OrderBy(chunk => EF.Functions.VectorDistance("cosine", chunk.Embedding, queryVector)) // Translated to T-SQL native VECTOR_DISTANCE
+            .Take(10)
+            .Select(chunk => chunk.ContentChunk)
+            .ToListAsync();
+        }
+            
         var retrievedContext = string.Join("\n\n", topChunks);
 
         // 3. System Instructions: Direct the model to act as a grounded knowledge-bot
