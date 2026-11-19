@@ -23,6 +23,7 @@ if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("APPLICATIONINSIGHT
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
     .AddUserSecrets<Program>(optional: true)
+    .AddEnvironmentVariables()
     .Build();
 
 var embeddingSettings = configuration.GetSection("Foundry:Embedding").Get<FoundrySettings>();
