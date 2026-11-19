@@ -53,7 +53,10 @@ builder.Services.AddEmbeddingGenerator<string, Embedding<float>>(services =>
 );
 
 builder.Services.AddDbContext<PerceptiveCopilotDbContext>(options =>
-    options.UseSqlServer(configuration.GetConnectionString("PerceptiveCopilot"))
+    options.UseSqlServer(configuration.GetConnectionString("PerceptiveCopilot"), sqlOptions =>
+    {
+        sqlOptions.EnableRetryOnFailure();
+    })
 );
 
 builder.Build().Run();
