@@ -32,7 +32,7 @@ var openAIClient = new OpenAIClient(
 );
 
 var dbContextOptions = new DbContextOptionsBuilder<PerceptiveCopilotDbContext>()
-    .UseSqlServer(connectionString)
+    .UseSqlServer(connectionString, options => options.EnableRetryOnFailure())
     .Options;
 
 Console.WriteLine("Migrating database to latest schema");
@@ -44,6 +44,11 @@ IEmbeddingGenerator<string, Embedding<float>> embeddingGenerator = openAIClient
     .AsIEmbeddingGenerator();
 
 var ingestionService = new PdfIngestionService(embeddingGenerator, dbContextOptions);
+
+var xwingDataPath = GetRequiredSetting(configuration, "Ingestion:XWingDataPath");
+
+var preprocessor = new DataPreprocessor(xwingDataPath);
+preprocessor.GenerateXWingData();
 
 foreach (var filePath in filePaths)
 {
