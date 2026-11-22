@@ -1,3 +1,6 @@
 [submodule "xwing-data2"]
 	path = xwing-data2
 	url = https://github.com/philpursglove/xwing-data2
+[submodule "xwing-points"]
+	path = xwing-points
+	url = https://github.com/eirikmun/xwing-points
