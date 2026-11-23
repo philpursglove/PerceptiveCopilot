@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using PerceptiveCopilot.Ingestion.Schemas;
+using System.Text;
 using System.Text.Json;
 
 public class DataPreprocessor
