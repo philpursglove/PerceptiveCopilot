@@ -48,7 +48,7 @@ var ingestionService = new PdfIngestionService(embeddingGenerator, dbContextOpti
 var xwingDataPath = GetRequiredSetting(configuration, "Ingestion:XWingDataPath");
 
 var preprocessor = new DataPreprocessor(xwingDataPath);
-preprocessor.GenerateXWingData();
+var dataFilePaths = preprocessor.GenerateXWingData();
 
 foreach (var filePath in filePaths)
 {

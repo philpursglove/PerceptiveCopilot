@@ -9,8 +9,10 @@ public class DataPreprocessor
         _basePath = xwingDataPath;
     }
 
-    public void GenerateXWingData()
+    public List<string> GenerateXWingData()
     {
+        var filePaths = new List<string>();
+
         var filePath = Path.Combine(_basePath, "conditions\\conditions.json");
         var conditionsJson = File.ReadAllText(filePath);
         var conditions = JsonSerializer.Deserialize<Condition[]>(conditionsJson);
@@ -25,6 +27,12 @@ public class DataPreprocessor
         var tempPath = Path.GetTempPath();
         var textFilePath = Path.Combine(tempPath, "conditions.txt");
         File.WriteAllText(textFilePath, conditionsStringBuilder.ToString());
+        filePaths.Add(textFilePath);
 
+        filePath = Path.Combine(_basePath, "pilots\\first-order\\tie-bainterceptor.json");
+        var pilotsJson = File.ReadAllText(filePath);
+        var pilots = JsonSerializer.Deserialize<Pilot[]>(pilotsJson);
+
+        return filePaths;
     }
 }
